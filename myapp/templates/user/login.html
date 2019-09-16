@@ -1,8 +1,8 @@
 {% extends 'user/base' %}
 
 {% block content %}
-<h1> log in </h1>
-<form action="/chat"  method="post">
+<h1> LOG IN </h1>
+<form action=""  method="post">
     {% csrf_token %}
     {{userReset}}
      <input type="text" id="id_username" name="username" placeholder="username" required ><br><br>
@@ -10,6 +10,7 @@
 
     <input type="submit">
     <li><a href="forgotpassword"> forgot password</a></li>
+<li><a href="/registration"> sign up</a></li>
     </form>
     <div>
         {% for message in messages %}

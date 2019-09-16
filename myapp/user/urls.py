@@ -13,29 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path
 from . import views
+from rest_framework_jwt.views import refresh_jwt_token, obtain_jwt_token
 
-
-from rest_framework_jwt.views import refresh_jwt_token,obtain_jwt_token
-
+# all the urls are called
 urlpatterns = [
-     path('', views.home,  name='home'),
-    # path('registration/',views.Userview.as_view()),
-    path('registration/',views.registration),
-    path('auth/jwt/',obtain_jwt_token),
-    path('auth/jwt/refresh',refresh_jwt_token),
-    path('login/',views.login),
-    path('login/forgotpassword',views.forgotpassword),
-    path('activate/<token>/',views.activate,name="activate"),
-    path('reset_password/<token>/',views.reset_password,name="reset_password"),
-    path('login/forgotpassword/resetpassword/<userReset>',views.resetpassword, name="resetpassword"),
-    path('logout',views.login),
-
-
-
-    # path('list/', views.ListUsers.as_view())
-
+    path('', views.home, name='home'),
+    path('registration/', views.registration),
+    path('auth/jwt/', obtain_jwt_token),
+    path('auth/jwt/refresh', refresh_jwt_token),
+    path('login/', views.login),
+    path('login/forgotpassword', views.forgot_password),
+    path('activate/<token>/', views.activate, name="activate"),
+    path('reset_password/<token>/', views.reset_password, name="reset_password"),
+    path('login/forgotpassword/resetpassword/<userReset>', views.resetpassword, name="resetpassword"),
+    path('logout/', views.logout),
+    path('session/', views.session),
 
 ]
