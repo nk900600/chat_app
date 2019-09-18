@@ -1,4 +1,4 @@
-import redis
+import redis,json
 red = redis.StrictRedis(host="localhost", db=0, port=6379)
 
 

@@ -6,18 +6,14 @@
     <meta charset="utf-8"/>
     <title>Chat Rooms</title>
     <form action="">
-    <a href="/logout"> logout</a>
+    <a href="/logout"> logout</a><br><br><br>
         </form>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
 
 {% block contents %}
-
-    <a href="/chat/nikhil" id="room-name-input">nikhil kumar</a><br><br>
-    <a href="/chat/pankaj" id="room-name-input">pankaj kumar</a><br><br>
-    <a href="/chat/admin" id="room-name-input"> admin</a><br><br>
-    <a href="/chat/hunt" id="room-name-input">ETHAN hunt</a><br><br>
+    WELCOME BACK {{ username }}<br><br>
     What chat room would you like to enter and have a group chat?<br/>
     <input id="room-name-input" type="text" size="100"/><br/>
     <input id="room-name-submit" type="button" value="Enter"/>
@@ -37,7 +33,22 @@
 
         localStorage.setItem('token','{{ token }}');
         localStorage.setItem('username','{{ username }}');
-        sessionStorage.setItem('token','{{ token }}')
+        sessionStorage.setItem('token','{{ token }}');
+        sessionStorage.setItem('username','{{ username }}');
+
+         $.ajax({
+    url: 'http://127.0.0.1:8000/chat/'+roomName+'/',
+    headers: {
+        'token':localStorage.getItem('token'),
+        'Content-Type':'application/json'
+    },
+    method: 'POST',
+    dataType: 'json',
+    success: function(data){
+      console.log('success:--> '+data);
+    }
+  });
+
     </script>
 
 </body>

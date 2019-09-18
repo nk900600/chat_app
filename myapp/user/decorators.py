@@ -1,8 +1,10 @@
-import jwt
+import jwt,re
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from user.redis import Redis
+from django.shortcuts import HttpResponse
+
 
 
 def login_decorator(function):
@@ -16,7 +18,7 @@ def login_decorator(function):
         """
         try:
             red = Redis() # red object is created
-            token = red.get("token")   # token is fetched from redis
+            token = red.get("token").decode("utf-8") # token is fetched from redis
             try:
                 decode = jwt.decode(token, settings.SECRET_KEY)
             except TypeError:
@@ -29,5 +31,7 @@ def login_decorator(function):
                 return redirect('/session')
         except Exception:
             return redirect('/session')
-
     return wrapper
+
+
+

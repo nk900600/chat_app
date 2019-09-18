@@ -8,7 +8,7 @@ class Registration(models.Model):
     username = models.CharField(max_length=100)
     email = models.EmailField()
     password = models.CharField(max_length=100)
-    messages=models.TextField(max_length=1000)
+
 
     if name == "" or username == "" or email == "" or password == "":
         raise forms.ValidationError(" one of the above field is empty")

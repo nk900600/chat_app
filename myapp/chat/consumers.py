@@ -3,6 +3,13 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 import json
 from django.contrib.auth.models import User
+from requests import request
+
+from chat.models import Message
+from user.redis import Redis
+# from user.views import ajax_token
+
+red=Redis()
 
 
 class ChatConsumer(WebsocketConsumer):
@@ -22,6 +29,7 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
         self.accept()
+        return self.room_name
 
     def disconnect(self, close_code):
         """
@@ -40,16 +48,21 @@ class ChatConsumer(WebsocketConsumer):
         :param text_data: data is passed
         :return: will save the message
         """
+
+
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
+        # mess=Message.objects.create(messages=message)
+        # mess.save()
 
-        # Send message to room group
+    # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
                 'type': 'chat_message',
                 'message': message
             }
+
         )
 
     # Receive message from room group
@@ -59,8 +72,13 @@ class ChatConsumer(WebsocketConsumer):
         :return: will dispatch chat messages
         """
         message = event['message']
-
-        # Send message to WebSocket
+        mess = Message.objects.create(messages=json.dumps(message))
+        # json.dumps(mess)
         self.send(text_data=json.dumps({
             'message': message
         }))
+        print(mess.messages)
+        return message+mess.messages
+
+    def rating(self):
+        pass

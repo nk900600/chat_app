@@ -15,6 +15,10 @@ red = Redis()
 AUTH_ENDPOINT = "http://127.0.0.1:8000/auth/jwt/"
 
 
+
+
+
+
 def home(request):
     """
     :param request: simple request is made from the user
@@ -126,12 +130,13 @@ def login(request):
                 'message': "successfully logged",
                 'data': [r.json()['token']],
 
+
             }
             messages.info(request, "logged in")
 
             # here redis data base is used for storing data
-            set = red.set('token', r.json()['token'])
-            set = red.set("username",username)
+            set = red.set("token",r.json()['token'])
+            user = red.set("username",username)
             get = red.get('token')
 
             return redirect('/chat',smd)
