@@ -1,4 +1,7 @@
 from smtplib import SMTPAuthenticationError
+
+from jwt import ExpiredSignatureError
+
 from user.decorators import login_decorator
 from .models import Registration
 import requests, jwt
@@ -226,6 +229,9 @@ def activate(request, token):
     except KeyError:
         messages.info(request, 'was not able to sent the email')
         return redirect('/registration')
+    except ExpiredSignatureError:
+        messages.info(request, 'activation link expired')
+        return redirect('/registration')
 
 
 def reset_password(request, token):
@@ -251,7 +257,9 @@ def reset_password(request, token):
     except KeyError:
         messages.info(request, 'was not able to sent the email')
         return redirect('login/forgotpassword')
-
+    except ExpiredSignatureError:
+        messages.info(request, 'activation link expired')
+        return redirect('login/forgotpassword')
 
 def resetpassword(request, userReset):
     """
