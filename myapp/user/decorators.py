@@ -17,19 +17,24 @@ def login_decorator(function):
         :return: will check token expiration
         """
         try:
+
             red = Redis() # red object is created
-            token = red.get("token").decode("utf-8") # token is fetched from redis
+            token = red.get('token').decode("utf-8") # token is fetched from redis
+            # print(token)
             try:
                 decode = jwt.decode(token, settings.SECRET_KEY)
+
             except TypeError:
                 return redirect('/session')
-            username = decode['username']
-            user = User.objects.get(username=username)
-            if user is not None:
+
+            user1 = decode['username']
+            user2 = User.objects.get(username=user1)
+            if user2 is not None:
                 return function(*args, **kwargs)
             else:
                 return redirect('/session')
-        except Exception:
+        except Exception as e:
+            print(e)
             return redirect('/session')
     return wrapper
 

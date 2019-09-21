@@ -3,13 +3,13 @@ from smtplib import SMTPAuthenticationError
 from jwt import ExpiredSignatureError
 
 from user.decorators import login_decorator
-from .models import Registration
+from .models import Registration, LoggedUser
 import requests, jwt
 from django.conf import settings
 from django.contrib.auth.models import User, auth
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import  EmailMessage
-from django.shortcuts import render, redirect,HttpResponse
+from django.shortcuts import render, redirect, HttpResponse, render_to_response
 from django.contrib import messages
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
@@ -123,26 +123,33 @@ def login(request):
             }
 
             # here token is created and data is stored in redis
-            r = requests.post(AUTH_ENDPOINT, data=data)
-            auth.login(request, user)
-            z = jwt.decode(r.json()['token'], settings.SECRET_KEY)
+            token=jwt.encode(data,settings.SECRET_KEY,algorithm="HS256").decode('utf-8')
+
+            # r = requests.post(AUTH_ENDPOINT, data=data)
+            # auth.login(request, user)
+            userlist=[]
+
+            logged_user=LoggedUser.objects.all().order_by('username')
+            # print(logged_user)
+            for i in logged_user:
+                userlist.append(i.username)
 
             # smd format is used for display token
             smd = {
                 'success': True,
                 'message': "successfully logged",
-                'data': [r.json()['token']],
-
+                'token': token,
+                'username' : username,
+                'userlist' : userlist,
 
             }
             messages.info(request, "logged in")
-
             # here redis data base is used for storing data
-            set = red.set("token",r.json()['token'])
-            user = red.set("username",username)
-            get = red.get('token')
-
-            return redirect('/chat',smd)
+            # red.set(username,token)
+            # g= red.get('token')
+            # print(g)
+            return render(request,'user/dashboard.html',smd)
+            # return redirect('/chat')
         else:
             messages.info(request, "password error")
             return render( request,'user/login.html')
@@ -177,10 +184,8 @@ def forgot_password(request):
                         'username': username,
                         'password': password
                     }
-
                     r = requests.post(AUTH_ENDPOINT, data=data)
                     key = r.json()['token']
-
                     # email is generated  where it is sent the email address entered in the form
                     mail_subject = "Activate your account by clicking below link"
                     mail_message = render_to_string('user/reset_password_token_link.html', {
@@ -298,7 +303,12 @@ def logout(request):
     :param request: logout request is made
     :return: we will delete the token which was stored in redis
     """
-    red.delete()
+    # auth.logout()
+    user=request.user
+    username=user.username
+    print(username)
+    red.delete(username)
+
     messages.info(request,"logged out")
     return render(request,'user/logout.html')
 
@@ -309,3 +319,20 @@ def session(request):
     :return:  if token is deleted and user goes back then it will take to login page
     """
     return render(request,'user/session.html')
+
+def ajax(request):
+    if request.method == 'POST':
+        token = request.headers['token']
+        print(token)
+        decode = jwt.decode(token, settings.SECRET_KEY)
+        username = decode['username']
+        print(username)
+        red.set('token',token)
+
+        user = User.objects.get(username=username)
+        if user is not None:
+            return redirect('chat')
+        else:
+            return redirect('/login')
+    else:
+        return redirect('/login')

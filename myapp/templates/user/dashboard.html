@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dashboard</title>
+</head>
+<body>
+
+ welcome user click here to chat
+ <a href="/chat"> link for chat</a>
+ <script>
+        var user="{{ username }}";
+     localStorage.setItem({{ username }}, {{ token }});
+     sessionStorage.setItem('user',{{ username }});
+     sessionStorage.setItem('token',{{ token }});
+
+      $.ajax({
+        url: 'http://127.0.0.1:8000/chat/',
+        headers: {
+        'token':localStorage.getItem(user),
+        'Content-Type':'application/json'
+    },
+    method: 'POST',
+    dataType: 'json',
+    success: function(data){
+      console.log('success:--> '+data);
+    }
+  });
+
+
+ </script>
+</body>
+</html>

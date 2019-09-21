@@ -10,9 +10,8 @@ class Message(models.Model):
     messages =models.TextField(max_length=1000,default="foobar")
     rating = models.TextField(max_length=100,default="foobar")
     From = models.TextField(max_length=100,default="foobar")
+    # time=models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return str(self.indentifier_message_number)
 
     class Meta:
         verbose_name = 'message log'

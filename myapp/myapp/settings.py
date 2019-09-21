@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 import datetime
 import os
+from dotenv import load_dotenv,find_dotenv
+from pathlib import *
+load_dotenv(find_dotenv())
+env_path=Path(".")/'.env'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'nw#jf7ka*#nh-6+6)04@1qf83l0lk06f-y6d^wa3y@qy=pad0*'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -90,9 +94,9 @@ DATABASES = {
 }
 EMAIL_USE_TLS= True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = "nk90600@gmail.com"
-EMAIL_HOST_PASSWORD = "pankaj007"
-EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

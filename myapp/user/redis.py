@@ -13,8 +13,8 @@ class Redis:
         :param value: value is keys data
         :return: will set kay and its value
         """
-        set = red.set(key, value)
-        return set
+        red.set(key, value)
+
 
     def get(self,key):
         """
@@ -24,9 +24,9 @@ class Redis:
         get = red.get(key)
         return get
 
-    def delete(self):
+    def delete(self,key):
         """
         :return: will delete the key stored in redis
         """
-        red.flushall()
+        red.delete(key)
         return

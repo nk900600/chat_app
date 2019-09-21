@@ -4,13 +4,26 @@
 <head>
     <meta charset="utf-8"/>
     <title>Chat Room</title>
-     user name : {{ user }}
+     <div align="center">user name : {{ user }}</div>
+    <script>
+
+        $(document).ready(function() {
+          var token = localStorage.getItem('token');
+            if (token===null){
+                window.location.pathname = '/session';
+            }
+
+    alert("document is ready");
+});
+
+    </script>
 </head>
 <body>
 
+ <div align="center">
     <textarea id="chat-log" disabled=disabled cols="100" rows="20"></textarea><br/>
     <input id="chat-message-input" type="text" size="100"/><br/>
-    <input id="chat-message-submit" type="button" value="Send"/>
+    <input id="chat-message-submit" type="button" value="Send"/></div>
 </body>
 <script>
     var roomName = {{ room_name_json }};
@@ -41,11 +54,16 @@
         var messageInputDom = document.querySelector('#chat-message-input');
         var message1 = messageInputDom.value;
         var message=user+":" +message1;
-        chatSocket.send(JSON.stringify({
-            'message': message
-        }));
-         messageInputDom.value=""
-    };
+        if (message1.val===""){
+             alert('no data');
+        }
+        else {
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = "";
+
+        } };
 
 </script>
 </html>
