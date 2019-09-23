@@ -30,6 +30,7 @@ urlpatterns = [
     path('login/forgotpassword/resetpassword/<userReset>', views.resetpassword, name="resetpassword"),
     path('logout/', views.logout),
     path('session/', views.session),
+    # path('dashboard',views.ajax)
 
 
 ]

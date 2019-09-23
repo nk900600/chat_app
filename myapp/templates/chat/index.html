@@ -54,22 +54,40 @@
                 window.location.pathname = '/chat/' + roomName + '/';
             };
 
+
             var user ='{{ username }}';
+            var token="{{ token }}";
             localStorage.setItem(user, '{{ token }}');
+            sessionStorage.setItem("token","{{ token }}");
+         var roomName = document.querySelector('#room-name-input').value;
+ {##}
+ {#if (token==null) {#}
+ {#    window.history.forward();#}
+ {##}
+ {#    function noBack() {#}
+ {#        window.history.forward();#}
+ {#    }}#}
 
 
-         $.ajax({
-        url: 'http://127.0.0.1:8000/chat/',
-        headers: {
-        'token':localStorage.getItem(user),
-        'Content-Type':'application/json'
-    },
-    method: 'POST',
-    dataType: 'json',
-    success: function(data){
-      console.log('success:--> '+data);
-    }
-  });
+        if (sessionStorage.getItem("token")!=null) {
+            $.ajax({
+                url: 'http://127.0.0.1:8000/chat',
+                headers: {
+                    'token': sessionStorage.getItem("token"), 'Content-Type': 'application/json',
+                },
+                method: 'post',
+                dataType: 'json',
+                data: token,
+                success: function (data) {
+                    console.log('success:--> ' + data);
+                }
+            });
+        }
+        else{
+             window.location.pathname = '/session';
+        }
+
+
     </script>
 </body>
 </html>

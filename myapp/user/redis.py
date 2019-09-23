@@ -24,9 +24,9 @@ class Redis:
         get = red.get(key)
         return get
 
-    def delete(self,key):
+    def delete(self):
         """
         :return: will delete the key stored in redis
         """
-        red.delete(key)
+        red.flushall()
         return

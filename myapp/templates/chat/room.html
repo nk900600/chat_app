@@ -5,19 +5,18 @@
     <meta charset="utf-8"/>
     <title>Chat Room</title>
      <div align="center">user name : {{ user }}</div>
-    <script>
+    <div align="right"  class="navbar-right"> <a href="/logout"> logout</a></div>
 
-        $(document).ready(function() {
-          var token = localStorage.getItem('token');
-            if (token===null){
-                window.location.pathname = '/session';
-            }
+{#        $(document).ready(function() {#}
+{#          var token = localStorage.getItem('token');#}
+{#            if (token===null){#}
+{#                window.location.pathname = '/session';#}
+{#            }#}
 
-    alert("document is ready");
-});
+{#    alert("document is ready");#}
 
-    </script>
 </head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <body>
 
  <div align="center">
@@ -26,7 +25,7 @@
     <input id="chat-message-submit" type="button" value="Send"/></div>
 </body>
 <script>
-    var roomName = {{ room_name_json }};
+    var roomName = "{{ room_name_json }}";
     var user= "{{ user }}";
 
     var chatSocket = new WebSocket(
@@ -64,6 +63,29 @@
             messageInputDom.value = "";
 
         } };
+
+
+        var token =(sessionStorage.getItem('token'));
+        var room= '{{ room_name_json }}';
+
+       if (token!=null){
+       $.ajax({
+             url: 'http://127.0.0.1:8000/chat/'+room+'/',
+             headers: {
+                 'token': sessionStorage.getItem("token"), 'Content-Type': 'application/json',
+             },
+             method: 'post',
+             dataType: 'json',
+             data:token,
+             success: function (data) {
+                 console.log('success:--> ' + data);}})}
+       else {
+
+           window.location.pathname = '/session';
+       }
+
+
+
 
 </script>
 </html>

@@ -20,8 +20,6 @@ class Registration(models.Model):
         verbose_name_plural = 'user details '
 
 
-
-
 class LoggedUser(models.Model):
     username = models.CharField(max_length=30, primary_key=True)
 

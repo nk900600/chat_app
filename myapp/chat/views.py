@@ -1,6 +1,7 @@
 import jwt
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 import json
@@ -13,29 +14,40 @@ red = Redis()
 
 
 
-@login_decorator
 def index(request):
     """
     :param request: request is made by user
     :return: will render token which will be stored in web browser
     """
-    user=request.user
-    username=user.username
-    token = red.get('token').decode("utf-8")
-    logged_user = LoggedUser.objects.all().order_by('username')
 
-    userlist=[]
-    for i in logged_user:
-        userlist.append(i.username)
-    data = {
-        "token": token,
-        "username":user,
-        "userlist":userlist
-    }
-    print(userlist)
-    return render(request, 'chat/index.html', data)
+    try:
+        token = (request.body).decode("utf-8")
+        red.set('token',token)
+        decode = jwt.decode(token, settings.SECRET_KEY)
+        print("hello world " +token)
+        username = decode['username']
+        print(username)
+        user = User.objects.get(username=username)
 
-@login_decorator
+        if user is not None:
+
+            logged_user = LoggedUser.objects.all().order_by('username')
+
+            userlist=[]
+            for i in logged_user:
+                userlist.append(i.username)
+            data = {
+                "token": token,
+                "username":user,
+                "userlist":userlist
+            }
+
+            return render(request, 'chat/index.html')
+    except Exception as e:
+        return redirect("/session")
+
+
+
 def room(request, room_name):
     """
     :param request: user makes a request
@@ -43,26 +55,25 @@ def room(request, room_name):
     :return: will return the chat room page
     """
     if request.method=='POST':
-        token=request.headers['token']
-        print(token)
+        token = (request.body).decode('utf-8')
         decode = jwt.decode(token, settings.SECRET_KEY)
         username = decode['username']
         user = User.objects.get(username=username)
         if user is not None:
-
-            userlist = []
+            userlist=[]
             logged_user = LoggedUser.objects.all().order_by('username')
             for i in logged_user:
                 userlist.append(i.username)
             return render(request, 'chat/room.html', {
                 'room_name_json': mark_safe(json.dumps(room_name)),
-                'user':json.dumps(user),
+                'user':(user),
                 'userlist':userlist
             })
         else:
-            return redirect('/session')
-    else:
-        return render(request, 'chat/room.html', {
-            'room_name_json': mark_safe(json.dumps(room_name)),
-        })
+            return redirect("/session")
+
+    return render(request, 'chat/room.html', {
+        'room_name_json': room_name,
+
+    })
 

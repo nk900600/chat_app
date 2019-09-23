@@ -10,22 +10,21 @@
  <a href="/chat"> link for chat</a>
  <script>
         var user="{{ username }}";
-     localStorage.setItem({{ username }}, {{ token }});
-     sessionStorage.setItem('user',{{ username }});
-     sessionStorage.setItem('token',{{ token }});
+     localStorage.setItem("{{ username }}", "{{ token }}");
+     sessionStorage.setItem('user',"{{ username }}");
+     sessionStorage.setItem('token',"{{ token }}");
 
-      $.ajax({
-        url: 'http://127.0.0.1:8000/chat/',
+  $.ajax({
+        url: 'http://127.0.0.1:8000/chat',
         headers: {
-        'token':localStorage.getItem(user),
-        'Content-Type':'application/json'
-    },
-    method: 'POST',
-    dataType: 'json',
-    success: function(data){
-      console.log('success:--> '+data);
-    }
+        'token':localStorage.getItem({{ username }}), 'Content-Type':'application/json'    },
+        method: 'POST',
+        dataType: 'json',
+        success: function(data){
+          console.log('success:--> '+data);
+        }
   });
+
 
 
  </script>

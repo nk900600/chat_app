@@ -6,5 +6,11 @@
 
     localStorage.clear();
     sessionStorage.clear();
+    if (localStorage.getItem("token") == null) {
+                function preventBack(){window.history.forward();}
+              setTimeout("preventBack()", 0);
+              window.onunload=function(){null};
+
+         }
     </script>
 {% endblock %}

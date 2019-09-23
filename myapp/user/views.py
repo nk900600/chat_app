@@ -1,6 +1,7 @@
 from smtplib import SMTPAuthenticationError
 
 from jwt import ExpiredSignatureError
+from rest_framework import request
 
 from user.decorators import login_decorator
 from .models import Registration, LoggedUser
@@ -27,7 +28,16 @@ def home(request):
     :param request: simple request is made from the user
     :return:
     """
-    return render(request, 'user/index.html')
+    if request.method=='POST':
+        print("swdsw")
+        token=request.META.get("HTTP_data")
+        print(token)
+        decode = jwt.decode(token, settings.SECRET_KEY)
+        username = decode['username']
+        user = User.objects.get(username=username)
+    else:
+
+        return render(request, 'user/index.html')
 
 
 def registration(request):
@@ -124,6 +134,7 @@ def login(request):
 
             # here token is created and data is stored in redis
             token=jwt.encode(data,settings.SECRET_KEY,algorithm="HS256").decode('utf-8')
+            print(token)
 
             # r = requests.post(AUTH_ENDPOINT, data=data)
             # auth.login(request, user)
@@ -148,8 +159,9 @@ def login(request):
             # red.set(username,token)
             # g= red.get('token')
             # print(g)
-            return render(request,'user/dashboard.html',smd)
-            # return redirect('/chat')
+            # return render(request,'user/dashboard.html',smd)
+            return render(request,'chat/index.html',smd)
+            # return redirect('/chat',smd)
         else:
             messages.info(request, "password error")
             return render( request,'user/login.html')
@@ -297,7 +309,7 @@ def resetpassword(request, userReset):
         return render(request, 'user/resetpassword.html')
 
 
-@login_decorator
+# @login_decorator
 def logout(request):
     """
     :param request: logout request is made
@@ -306,9 +318,8 @@ def logout(request):
     # auth.logout()
     user=request.user
     username=user.username
-    print(username)
-    red.delete(username)
 
+    red.delete()
     messages.info(request,"logged out")
     return render(request,'user/logout.html')
 
@@ -320,19 +331,4 @@ def session(request):
     """
     return render(request,'user/session.html')
 
-def ajax(request):
-    if request.method == 'POST':
-        token = request.headers['token']
-        print(token)
-        decode = jwt.decode(token, settings.SECRET_KEY)
-        username = decode['username']
-        print(username)
-        red.set('token',token)
 
-        user = User.objects.get(username=username)
-        if user is not None:
-            return redirect('chat')
-        else:
-            return redirect('/login')
-    else:
-        return redirect('/login')
