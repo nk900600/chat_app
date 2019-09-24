@@ -14,10 +14,10 @@
     <li><a href="forgotpassword"> forgot password</a></li>
 <li><a href="/registration"> sign up</a></li></div>
     </form>
-    <div>
-{#        {% for message in messages %}#}
-{#        <h3>{{message}}</h3>#}
-{#        {% endfor %}#}
+    <div align="center">
+        {% for message in messages %}
+        <h3>{{message}}</h3>
+        {% endfor %}
     </div>
     <script>
         if (localStorage.getItem("token") == null) {
