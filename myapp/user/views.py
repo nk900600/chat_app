@@ -1,6 +1,6 @@
 from smtplib import SMTPAuthenticationError
 
-from jwt import ExpiredSignatureError
+from jwt import ExpiredSignatureError, InvalidSignatureError
 from rest_framework import request
 
 from user.decorators import login_decorator
@@ -259,7 +259,7 @@ def reset_password(request, token):
     except KeyError:
         messages.info(request, 'was not able to sent the email')
         return redirect('login/forgotpassword')
-    except ExpiredSignatureError:
+    except Exception as e:
         messages.info(request, 'activation link expired')
         return redirect('login/forgotpassword')
 
