@@ -22,15 +22,10 @@ def index(request):
 
     try:
         token = (request.body).decode("utf-8")
-        red.set('token',token)
         decode = jwt.decode(token, settings.SECRET_KEY)
-        print("hello world " +token)
         username = decode['username']
-        print(username)
         user = User.objects.get(username=username)
-
         if user is not None:
-
             logged_user = LoggedUser.objects.all().order_by('username')
 
             userlist=[]
@@ -71,9 +66,11 @@ def room(request, room_name):
             })
         else:
             return redirect("/session")
-
-    return render(request, 'chat/room.html', {
-        'room_name_json': room_name,
-
-    })
+    else:
+        mess=Message.objects.filter(indentifier_message_number=room_name).values('messages')
+        m=list(mess)
+        return render(request, 'chat/room.html', {
+            'room_name_json': room_name,
+            'messages':mark_safe(json.dumps(m))
+        })
 

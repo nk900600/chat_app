@@ -74,7 +74,7 @@ class ChatConsumer(WebsocketConsumer):
         room=self.room_name
         message = event['message']
 
-        mess = Message.objects.create(messages=json.dumps(message),indentifier_message_number=room)
+        mess = Message.objects.create(messages=message,indentifier_message_number=room)
         # Message.objects.all().filter(room)
         # json.dumps(mess)
         self.send(text_data=json.dumps({

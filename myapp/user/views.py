@@ -9,18 +9,15 @@ import requests, jwt
 from django.conf import settings
 from django.contrib.auth.models import User, auth
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import  EmailMessage
+from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect, HttpResponse, render_to_response
 from django.contrib import messages
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
-from.redis import Redis
+from .redis import Redis
+
 red = Redis()
 AUTH_ENDPOINT = "http://127.0.0.1:8000/auth/jwt/"
-
-
-
-
 
 
 def home(request):
@@ -28,9 +25,9 @@ def home(request):
     :param request: simple request is made from the user
     :return:
     """
-    if request.method=='POST':
+    if request.method == 'POST':
         print("swdsw")
-        token=request.META.get("HTTP_data")
+        token = request.META.get("HTTP_data")
         print(token)
         decode = jwt.decode(token, settings.SECRET_KEY)
         username = decode['username']
@@ -117,7 +114,7 @@ def login(request):
     """
     if request.method == 'POST':
         username = request.POST['username']
-        password = request.POST['password1']
+        password = request.POST['password']
 
         # validation is done
         if username == "" or password == "":
@@ -131,40 +128,28 @@ def login(request):
                 'username': username,
                 'password': password
             }
-
             # here token is created and data is stored in redis
-            token=jwt.encode(data,settings.SECRET_KEY,algorithm="HS256").decode('utf-8')
-            print(token)
+            token = jwt.encode(data, settings.SECRET_KEY, algorithm="HS256").decode('utf-8')
+            userlist = []
+            logged_user = LoggedUser.objects.all().order_by('username')
 
-            # r = requests.post(AUTH_ENDPOINT, data=data)
-            # auth.login(request, user)
-            userlist=[]
-
-            logged_user=LoggedUser.objects.all().order_by('username')
-            # print(logged_user)
             for i in logged_user:
-                userlist.append(i.username)
+                if i.username != username:
+                    userlist.append(i.username)
 
             # smd format is used for display token
             smd = {
                 'success': True,
                 'message': "successfully logged",
                 'token': token,
-                'username' : username,
-                'userlist' : userlist,
-
+                'username': username,
+                'userlist': userlist[1:],
             }
             messages.info(request, "logged in")
-            # here redis data base is used for storing data
-            # red.set(username,token)
-            # g= red.get('token')
-            # print(g)
-            # return render(request,'user/dashboard.html',smd)
-            return render(request,'chat/index.html',smd)
-            # return redirect('/chat',smd)
+            return render(request, 'chat/index.html', smd)
         else:
             messages.info(request, "password error")
-            return render( request,'user/login.html')
+            return render(request, 'user/login.html')
     else:
         return render(request, 'user/login.html')
 
@@ -278,6 +263,7 @@ def reset_password(request, token):
         messages.info(request, 'activation link expired')
         return redirect('login/forgotpassword')
 
+
 def resetpassword(request, userReset):
     """
     :param request:  user will request for resetting password
@@ -298,7 +284,6 @@ def resetpassword(request, userReset):
             return redirect("/login/forgotpassword/resetpassword/" + str(userReset))
 
         else:
-            # if user is not none and password is validated then we will save the data
             user = User.objects.get(username=userReset)
             user.set_password(password1)
             # here we will save the user password in the database
@@ -309,19 +294,14 @@ def resetpassword(request, userReset):
         return render(request, 'user/resetpassword.html')
 
 
-# @login_decorator
 def logout(request):
     """
     :param request: logout request is made
     :return: we will delete the token which was stored in redis
     """
-    # auth.logout()
-    user=request.user
-    username=user.username
-
     red.delete()
-    messages.info(request,"logged out")
-    return render(request,'user/logout.html')
+    messages.info(request, "logged out")
+    return render(request, 'user/logout.html')
 
 
 def session(request):
@@ -329,6 +309,4 @@ def session(request):
     :param request: request is made
     :return:  if token is deleted and user goes back then it will take to login page
     """
-    return render(request,'user/session.html')
-
-
+    return render(request, 'user/session.html')

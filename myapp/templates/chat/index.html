@@ -6,7 +6,7 @@
     <meta charset="utf-8"/>
     <title>Chat Rooms</title>
     <form action="">
-   <div align="right"  class="navbar-right"> <a href="/logout"> logout</a></div>
+   <div align="right"  class="navbar-right"> <a href="http://127.0.0.1:8000/login/logout"> logout</a></div>
         <div align="left"> WELCOME BACK --{{ username }}</div>
         </form>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -15,7 +15,7 @@
 
 {% block contents %}
     <br><br>
-    online user <br> <br>
+    Online User <br> <br>
 
      {% for uname in userlist %}
        <input id="{{ uname }}" type="button" class="{{ uname }}" value="{{ uname }}" ><br><br>
@@ -59,6 +59,7 @@
             var token="{{ token }}";
             localStorage.setItem(user, '{{ token }}');
             sessionStorage.setItem("token","{{ token }}");
+            sessionStorage.setItem("user",user);
          var roomName = document.querySelector('#room-name-input').value;
  {##}
  {#if (token==null) {#}
