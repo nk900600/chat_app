@@ -1,3 +1,4 @@
+dotenv
 aioredis==1.2.0
 asgiref==3.2.2
 asn1crypto==0.24.0

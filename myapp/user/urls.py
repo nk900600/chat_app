@@ -28,9 +28,9 @@ urlpatterns = [
     path('activate/<token>/', views.activate, name="activate"),
     path('reset_password/<token>/', views.reset_password, name="reset_password"),
     path('login/forgotpassword/resetpassword/<userReset>', views.resetpassword, name="resetpassword"),
-    path('login/logout/', views.logout),
+    path('logout/', views.logout),
     path('session/', views.session),
-    # path('dashboard',views.ajax)
+
 
 
 ]
