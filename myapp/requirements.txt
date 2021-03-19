@@ -16,7 +16,7 @@ cryptography==2.7
 daphne==2.3.0
 Django==2.2.5
 django-jenkins==0.110.0
-djangorestframework==3.10.3
+djangorestframework==3.11.2
 djangorestframework-jwt==1.11.0
 hiredis==1.0.0
 hyperlink==19.0.0
