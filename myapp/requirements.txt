@@ -26,7 +26,7 @@ javascript==2015.32.59
 msgpack==0.6.1
 pycparser==2.19
 PyHamcrest==1.9.0
-PyJWT==1.7.1
+PyJWT==2.4.0
 pytz==2019.2
 redis==3.3.8
 requests==2.22.0
